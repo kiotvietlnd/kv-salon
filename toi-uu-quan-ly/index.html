@@ -1,1 +1,472 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tối ưu Quản lý - KiotViet Salon</title>
+    <meta name="description" content="Hướng dẫn quản lý KiotViet ngành Salon: Hàng hóa, Nhân viên, Báo cáo, Thiết lập.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS (Animate on Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #fdf2f8; /* Pink-50 background tint */
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #f9a8d4; border-radius: 3px; } /* Pink thumb */
+        ::-webkit-scrollbar-thumb:hover { background: #ec4899; }
+
+        /* Background Animation */
+        @keyframes moveInCircle { 0% { transform: rotate(0deg); } 50% { transform: rotate(180deg); } 100% { transform: rotate(360deg); } }
+        @keyframes moveVertical { 0% { transform: translateY(-50%); } 50% { transform: translateY(50%); } 100% { transform: translateY(-50%); } }
+        @keyframes moveHorizontal { 0% { transform: translateX(-50%); } 50% { transform: translateX(50%); } 100% { transform: translateX(-50%); } }
+        
+        .soft-glow-background { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; 
+            background: linear-gradient(to bottom right, #fdf2f8, #fce7f3); 
+        }
+        .soft-glow-background .shape { position: absolute; filter: blur(140px); opacity: 0.4; }
+        .soft-glow-background .shape1 { height: 400px; width: 400px; background: #ec4899; border-radius: 50%; top: -50px; left: -100px; animation: moveInCircle 22s ease-in-out infinite; }
+        .soft-glow-background .shape2 { height: 450px; width: 450px; background: #f472b6; border-radius: 50%; bottom: -100px; right: -100px; animation: moveVertical 28s ease-in-out infinite; }
+        .soft-glow-background .shape3 { height: 300px; width: 500px; background: #db2777; border-radius: 50%; top: 50%; left: 50%; animation: moveHorizontal 35s ease-in-out infinite; }
+
+        .nav-link.active {
+            color: #db2777; /* Pink-600 */
+            border-bottom-color: #db2777;
+        }
+
+        /* Sidebar Navigation Active State */
+        .sidebar-link.active {
+            color: #db2777;
+            background-color: #fce7f3; /* Pink-100 */
+            border-left-color: #db2777;
+        }
+
+        /* Article Link Style */
+        .article-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-bottom: 1px dashed #fbcfe8;
+            transition: all 0.2s;
+        }
+        .article-item:last-child {
+            border-bottom: none;
+        }
+        .article-item:hover {
+            background-color: #fdf2f8;
+        }
+        
+        /* Floating Button Animation */
+        .float-btn {
+            transition: transform 0.2s;
+        }
+        .float-btn:hover {
+            transform: scale(1.1);
+        }
+        .float-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Tooltip CSS */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 100px;
+            background-color: #334155;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 4px 0;
+            position: absolute;
+            z-index: 10;
+            bottom: 130%;
+            left: 50%;
+            margin-left: -50px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 10px;
+            font-weight: 500;
+        }
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #334155 transparent transparent transparent;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body id="top" class="text-slate-700 antialiased selection:bg-pink-100 selection:text-pink-900">
+
+    <div class="soft-glow-background">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-pink-200 h-20">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+            <div class="flex items-center justify-between h-full gap-8">
+                <!-- Logo -->
+                <a href="#" class="flex-shrink-0 flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
+                    <img src="https://logo.kiotviet.vn/KiotViet-Logo-Horizontal.svg" alt="KiotViet Logo" class="h-8">
+                    <span class="text-slate-300 font-light text-2xl">|</span>
+                    <span class="font-bold text-pink-600 tracking-tight text-lg uppercase">ĐÀO TẠO SẢN PHẨM SALON</span>
+                </a>
+
+                <!-- Navigation Menu (Desktop) -->
+                <nav class="hidden lg:flex flex-1 justify-end items-center gap-6">
+                    <a href="bat-dau-lam-quen.html" class="nav-link text-sm font-bold text-slate-600 hover:text-pink-600 transition-colors uppercase tracking-wide border-b-2 border-transparent hover:border-pink-600 py-1">Bắt đầu làm quen</a>
+                    <a href="toi-uu-van-hanh.html" class="nav-link text-sm font-bold text-slate-600 hover:text-pink-600 transition-colors uppercase tracking-wide border-b-2 border-transparent hover:border-pink-600 py-1">Tối ưu vận hành</a>
+                    <a href="toi-uu-quan-ly.html" class="nav-link active text-sm font-bold text-slate-600 hover:text-pink-600 transition-colors uppercase tracking-wide border-b-2 border-transparent hover:border-pink-600 py-1">Tối ưu quản lý</a>
+                    <a href="thuc-day-doanh-thu.html" class="nav-link text-sm font-bold text-slate-600 hover:text-pink-600 transition-colors uppercase tracking-wide border-b-2 border-transparent hover:border-pink-600 py-1">Thúc đẩy doanh thu</a>
+                </nav>
+                
+                <div class="lg:hidden">
+                    <button class="text-slate-600 hover:text-pink-600 text-2xl"><i class="fa-solid fa-bars"></i></button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-0 min-h-[80vh]">
+        
+        <!-- Sticky Sub-Header -->
+        <div class="sticky top-20 z-40 bg-[#fdf2f8]/95 backdrop-blur-sm pt-4 pb-4 mb-8 shadow-sm border-b border-pink-200/50 -mx-4 px-4 sm:mx-0 sm:px-0 transition-all rounded-b-2xl">
+            <div class="flex justify-center w-full">
+                <!-- Search Bar -->
+                <div class="w-full max-w-2xl relative group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-magnifying-glass text-slate-400 group-hover:text-pink-500 transition-colors"></i>
+                    </div>
+                    <input type="text" id="search-input" placeholder="Tìm kiếm tính năng quản lý..." 
+                        class="w-full pl-10 pr-4 py-3 rounded-lg border border-pink-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 shadow-sm transition-all text-sm text-slate-700 bg-white">
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar Navigation (Sticky) -->
+            <aside class="lg:w-1/4 hidden lg:block">
+                <div class="sticky top-44 bg-white/80 backdrop-blur rounded-2xl p-4 shadow-sm border border-pink-100 overflow-y-auto max-h-[calc(100vh-220px)] custom-scrollbar">
+                    <h3 class="font-bold text-slate-700 mb-4 px-3 uppercase text-xs tracking-wider border-b border-pink-100 pb-2">Mục lục</h3>
+                    <nav id="salon-sidebar" class="space-y-1">
+                        <!-- JS Generated -->
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="lg:w-3/4 w-full">
+                <div class="mb-6" data-aos="fade-down">
+                    <h1 class="text-2xl font-black text-slate-800 uppercase tracking-tight">
+                        <span class="text-pink-600">Tối ưu Quản lý</span> <span class="text-slate-400 font-light mx-2">|</span> <span class="text-slate-600">Salon</span>
+                    </h1>
+                    <p class="text-slate-500 mt-1">Các công cụ quản lý chuyên sâu: Hàng hóa, Nhân viên, Báo cáo & Thiết lập.</p>
+                </div>
+                <div id="salon-content">
+                    <!-- JS Generated -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-white/80 backdrop-blur-md border-t border-pink-200 mt-10 py-8 relative z-10">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <a href="#" class="inline-block mb-4 hover:opacity-80 transition-opacity cursor-pointer">
+                <img src="https://logo.kiotviet.vn/KiotViet-Logo-Horizontal.svg" alt="KiotViet Logo" class="h-8 mx-auto grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+            </a>
+            <p class="text-slate-500 font-medium text-sm">Learning and Development Department</p>
+            <p class="text-slate-400 text-xs mt-2">© 2025 KiotViet. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Floating Action Buttons -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-center space-y-3">
+        <!-- Chatbot AI Button -->
+        <a href="https://notebooklm.google.com/notebook/57cc54d1-6bcf-423c-8f33-2e7fdbfea5d6" target="_blank" title="Hỏi Chatbot AI Salon" class="float-btn w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white hover:scale-110">
+            <i class="fa-solid fa-robot"></i>
+        </a>
+        
+        <!-- Document Button -->
+        <a href="https://www.kiotviet.vn/ho-tro/?type=salon" target="_blank" title="Xem Tài liệu HDSD" class="float-btn w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white hover:bg-blue-700">
+            <i class="fa-solid fa-book-open"></i>
+        </a>
+        
+        <!-- Video Button -->
+        <a href="https://www.youtube.com/playlist?list=PL3x3GXJzpHzSh1d0ANq3K4t1gVoAP1plT" target="_blank" title="Xem Video HDSD" class="float-btn w-12 h-12 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white hover:bg-red-700">
+            <i class="fa-brands fa-youtube"></i>
+        </a>
+        
+        <!-- Scroll Top -->
+        <a id="scroll-to-top" href="#top" title="Lên đầu Trang" class="hidden w-12 h-12 bg-white text-slate-600 border border-slate-200 rounded-full items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 hover:bg-slate-50">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            AOS.init({ once: true, duration: 800, easing: 'ease-out-cubic', offset: 50 });
+            
+            const scrollTopBtn = document.getElementById('scroll-to-top');
+            window.onscroll = function() {
+                if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                    scrollTopBtn.classList.remove('hidden');
+                    scrollTopBtn.classList.add('flex'); 
+                } else {
+                    scrollTopBtn.classList.add('hidden');
+                    scrollTopBtn.classList.remove('flex');
+                }
+            };
+
+            renderSalonContent();
+
+            // Search Functionality
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.toLowerCase();
+                const articles = document.querySelectorAll('.article-item');
+                
+                articles.forEach(article => {
+                    const title = article.querySelector('span').innerText.toLowerCase();
+                    const card = article.closest('.bg-white'); // The topic card
+                    
+                    if (title.includes(term)) {
+                        article.style.display = 'flex';
+                    } else {
+                        article.style.display = 'none';
+                    }
+                });
+
+                // Hide empty topic cards
+                const topicCards = document.querySelectorAll('#salon-content > div > div > .bg-white');
+                topicCards.forEach(card => {
+                    const visibleArticles = card.querySelectorAll('.article-item[style="display: flex;"], .article-item:not([style*="display: none"])');
+                    if (visibleArticles.length === 0 && term !== '') {
+                        card.style.display = 'none';
+                    } else {
+                        card.style.display = 'block';
+                    }
+                });
+            });
+        });
+
+        // --- DATA DÀNH RIÊNG CHO TRANG: TỐI ƯU QUẢN LÝ ---
+        const salonData = [
+            {
+                category: "Tối ưu Quản lý",
+                topics: [
+                    { 
+                        title: "Hàng hóa", 
+                        icon: "fa-boxes-stacked", 
+                        articles: [
+                            { title: "Danh sách hàng hóa", guideLink: "", courseLink: "" },
+                            { title: "Hàng hóa thường", guideLink: "", courseLink: "" },
+                            { title: "Hàng dịch vụ", guideLink: "", courseLink: "" },
+                            { title: "Gói dịch vụ - Liệu trình", guideLink: "", courseLink: "" },
+                            { title: "Thẻ tài khoản", guideLink: "", courseLink: "" },
+                            { title: "Thiết lập giá", guideLink: "", courseLink: "" },
+                            { title: "Kiểm kho", guideLink: "", courseLink: "" },
+                            { title: "Xuất hủy", guideLink: "", courseLink: "" },
+                            { title: "Chuyển hàng", guideLink: "", courseLink: "" }
+                        ] 
+                    },
+                    { 
+                        title: "Giao dịch", 
+                        icon: "fa-clock-rotate-left", 
+                        articles: [
+                            { title: "Hóa đơn", guideLink: "", courseLink: "" },
+                            { title: "Trả hàng", guideLink: "", courseLink: "" },
+                            { title: "Nhập hàng", guideLink: "", courseLink: "" },
+                            { title: "Trả hàng nhập", guideLink: "", courseLink: "" },
+                            { title: "Chi phí nhập hàng", guideLink: "", courseLink: "" }
+                        ] 
+                    },
+                    { title: "Nhà cung cấp", icon: "fa-handshake", articles: [{ title: "Nhà cung cấp", guideLink: "", courseLink: "" }] },
+                    { 
+                        title: "Khách hàng", 
+                        icon: "fa-users", 
+                        articles: [
+                            { title: "Khách hàng", guideLink: "", courseLink: "" },
+                            { title: "Quản lý Thẻ dịch vụ", guideLink: "", courseLink: "" }
+                        ] 
+                    },
+                    { 
+                        title: "Nhân viên", 
+                        icon: "fa-user-tie", 
+                        articles: [
+                            { title: "Quản lý nhân viên", guideLink: "", courseLink: "" },
+                            { title: "Quản lý chấm công", guideLink: "", courseLink: "" },
+                            { title: "Quản lý hoa hồng", guideLink: "", courseLink: "" },
+                            { title: "Quản lý tính lương", guideLink: "", courseLink: "" }
+                        ] 
+                    },
+                    { title: "Sổ quỹ", icon: "fa-book", articles: [{ title: "Sổ quỹ", guideLink: "", courseLink: "" }] },
+                    { 
+                        title: "Báo cáo", 
+                        icon: "fa-chart-pie", 
+                        articles: [
+                            { title: "Báo cáo", guideLink: "", courseLink: "" },
+                            { title: "Tổng quan", guideLink: "", courseLink: "" }
+                        ] 
+                    },
+                    { 
+                        title: "Thiết lập", 
+                        icon: "fa-gears", 
+                        articles: [
+                            { title: "Thiết lập cửa hàng", guideLink: "", courseLink: "" },
+                            { title: "Thông tin gian hàng", guideLink: "", courseLink: "" },
+                            { title: "Giới thiệu khách hàng", guideLink: "", courseLink: "" },
+                            { title: "Quản lý người dùng", guideLink: "", courseLink: "" },
+                            { title: "Quản lý chi nhánh", guideLink: "", courseLink: "" },
+                            { title: "Thiết lập vị trí - phòng", guideLink: "", courseLink: "" },
+                            { title: "Quản lý mẫu in", guideLink: "", courseLink: "" },
+                            { title: "Cài đặt thông báo trên điện thoại", guideLink: "", courseLink: "" }
+                        ] 
+                    },
+                    { 
+                        title: "Kết nối API", 
+                        icon: "fa-link", 
+                        articles: [
+                            { title: "Kết nối API", guideLink: "", courseLink: "" },
+                            { title: "Thiết lập Webhook", guideLink: "", courseLink: "" }
+                        ] 
+                    }
+                ]
+            }
+        ];
+
+        function renderSalonContent() {
+            const sidebar = document.getElementById('salon-sidebar');
+            const content = document.getElementById('salon-content');
+            let sidebarHtml = '';
+            let contentHtml = '';
+
+            // Render dựa trên Data đã lọc
+            salonData.forEach((section, index) => {
+                const sectionId = `salon-cat-${index}`;
+                
+                // Sidebar Logic
+                section.topics.forEach((topic, tIndex) => {
+                    const topicId = `topic-${tIndex}`;
+                    sidebarHtml += `
+                        <a href="#${topicId}" class="sidebar-link block px-3 py-2 text-sm font-medium text-slate-600 rounded-lg transition-colors hover:text-pink-600 hover:bg-pink-50 border-l-2 border-transparent">
+                            ${topic.title}
+                        </a>
+                    `;
+                });
+
+                // Main Content Section
+                contentHtml += `<div class="grid grid-cols-1 gap-8">`; // Wrapper
+
+                section.topics.forEach((topic, tIndex) => {
+                    const topicId = `topic-${tIndex}`;
+                    
+                    const articlesHtml = topic.articles.map(article => `
+                        <div class="article-item group/item">
+                            <span class="text-sm font-medium text-slate-700">${article.title}</span>
+                            <div class="flex items-center gap-2">
+                                ${article.guideLink ? 
+                                    `<a href="${article.guideLink}" target="_blank" class="px-2 py-1 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors flex items-center gap-1" title="Xem hướng dẫn sử dụng">
+                                        <i class="fa-solid fa-book-open"></i> HDSD
+                                    </a>` : 
+                                    `<div class="tooltip">
+                                        <span class="px-2 py-1 text-xs font-bold text-gray-400 bg-gray-100 rounded border border-gray-200 cursor-not-allowed flex items-center gap-1 opacity-60">
+                                            <i class="fa-solid fa-book-open"></i> HDSD
+                                        </span>
+                                        <span class="tooltiptext">Đang cập nhật</span>
+                                    </div>`
+                                }
+                                ${article.courseLink ? 
+                                    `<a href="${article.courseLink}" class="px-2 py-1 text-xs font-bold text-white bg-pink-500 hover:bg-pink-600 rounded border border-pink-600 transition-colors flex items-center gap-1" title="Vào khóa học">
+                                        <i class="fa-solid fa-chalkboard-user"></i> Khóa học
+                                    </a>` : 
+                                    `<div class="tooltip">
+                                        <span class="px-2 py-1 text-xs font-bold text-gray-400 bg-gray-100 rounded border border-gray-200 cursor-not-allowed flex items-center gap-1 opacity-60">
+                                            <i class="fa-solid fa-chalkboard-user"></i> Khóa học
+                                        </span>
+                                        <span class="tooltiptext">Đang cập nhật</span>
+                                    </div>`
+                                }
+                            </div>
+                        </div>
+                    `).join('');
+
+                    contentHtml += `
+                        <div id="${topicId}" class="scroll-mt-32 bg-white rounded-xl shadow-sm border border-pink-200 overflow-hidden hover:shadow-md transition-shadow">
+                            <div class="bg-gradient-to-r from-pink-50 to-white p-4 border-b border-pink-100 flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center shadow-sm border border-pink-100">
+                                    <i class="fa-solid ${topic.icon} text-lg"></i>
+                                </div>
+                                <h3 class="font-bold text-lg text-slate-700">${topic.title}</h3>
+                            </div>
+                            <div class="p-0">
+                                <div class="flex flex-col">
+                                    ${articlesHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                contentHtml += `</div>`;
+            });
+
+            sidebar.innerHTML = sidebarHtml;
+            content.innerHTML = contentHtml;
+
+            // Add scroll spy logic
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        document.querySelectorAll('.sidebar-link').forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-20% 0px -60% 0px' });
+
+            document.querySelectorAll('[id^="topic-"]').forEach(section => {
+                observer.observe(section);
+            });
+        }
+    </script>
+</body>
+</html>
